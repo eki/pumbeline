@@ -1,0 +1,69 @@
+Pumbeline - Random Name Generator
+
+This is a very simple Ruby library / script for generating random names with
+Markov Chains.
+
+  > bin/pumbeline --help
+  Usage: pumbeline [options] [file or stdin]
+      -n, --number N                   Number of words to generate
+      -N, --newline                    Use newline as word separator
+      -f, --filter regex               Apply filter to output
+      -w, --window N                   Window size (default 3)
+      -d, --allow_words_from_input     Allow words from input
+      -e, --encoding ENCODING          Specify the encoding of the input files
+
+
+
+Examples:
+
+  > bin/pumbeline words/color.txt -n 20 -w 1
+  ade alay be berrider bigerin brsichalu bulystemirulapon ffumuruvinawd
+  fonsnuseria hiturnt jan lis mivo pinglfan prarcratomeo sarint tadeawherudaro 
+  te trimogondowinqumay x
+
+  > bin/pumbeline words/color.txt -n 20 -w 2
+  alacerasierinder bra byzandy copea cory go golf ivendew khalt lap mart 
+  monquine na namokeyden ock pal peat pis rock sin
+
+  > bin/pumbeline words/color.txt -n 20 -w 3
+  amaroonstoneydew denic hunterry iceberry jazzber lavescent napis rass viris
+  wengeria
+
+  > bin/pumbeline words/color.txt -n 20 -w 4
+  turquoisee
+
+  > bin/pumbeline words/color.txt -n 20 -w 4
+  burn zaffron
+
+  > bin/pumbeline words/color.txt -n 20 -w 4
+  orch torchid ultramaranth
+
+  > bin/pumbeline words/color.txt -n 20 -w 4
+  almon auburnt
+
+  > bin/pumbeline words/color.txt -n 20 -w 5
+
+  > bin/pumbeline words/color.txt -n 20 -w 5
+
+
+In the above example, we're generating made-up words from a short list of color
+words.  We're asking for 20 words, but (by default) words from the input file
+are discarded (as are any duplicates).  
+
+The window size option (-w) dictates the number of prior characters to look at
+when building the probability model from which new words will be generated.  A
+shorter window will lead to words which are more akin to random gibberish.  As
+the window size increases, the generated words more closely resemble the input
+words, but less and less new results will be produced -- until no results are
+produced at all.  In my experience, the sweet spot is often 3 (the default).
+
+  > bin/pumbeline words/color.txt -n 10000 -f "^p.*a$" 
+  palaya pansa pera peria peridia persia pinereolia pisteria pisterra
+
+In the above example, a large number of words are generated before applying a
+filter.  In this case, we're looking for new words that begin with 'p' and end
+with the letter 'a'.
+
+The name of this project was found by searching for interesting words in this
+manner.
+

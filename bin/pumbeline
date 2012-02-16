@@ -1,0 +1,67 @@
+#!/usr/bin/env ruby
+
+$:.push( File.expand_path( File.dirname( __FILE__ ) ) + '/../lib' )
+
+require 'optparse'
+require 'pumbeline'
+
+
+OPTS = { 
+  number:     1, 
+  separator:  '\s', 
+  filter:     /.*/, 
+  window:     3, 
+  duplicate:  false,
+  encoding:   nil
+}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: pumbeline [options] [file or stdin]"
+
+  opts.on( "-n N", "--number N", Integer, "Number of words to generate" ) do |v|
+    OPTS[:number] = v
+  end
+
+  opts.on( "-N", "--newline", "Use newline as word separator" ) do |v|
+    OPTS[:separator] = '\n'
+  end
+
+  opts.on( "-f regex", "--filter regex", Regexp, 
+           "Apply filter to output" ) do |v|
+
+    OPTS[:filter] = v
+  end
+
+  opts.on( "-w N", "--window", Integer, "Window size (default 3)" ) do |v|
+    OPTS[:window] = v
+  end
+
+  opts.on( "-d", "--allow_words_from_input", "Allow words from input" ) do |v|
+    OPTS[:duplicate] = true
+  end
+
+  opts.on( "-e ENCODING", "--encoding ENCODING", 
+    "Specify the encoding of the input files" ) do |v|
+
+    OPTS[:encoding] = v
+  end
+end.parse!
+
+ARGF.set_encoding( OPTS[:encoding] )  if OPTS[:encoding]
+
+rng    = RandomNameGenerator.new( OPTS[:window] )
+input  = ARGF.read.split( /#{OPTS[:separator]}/ )
+output = []
+
+rng.process_words( input )
+
+OPTS[:number].times do
+  name = rng.name
+
+  if name =~ OPTS[:filter] && (OPTS[:duplicate] || ! input.include?( name ))
+    output << name
+  end
+end
+
+puts output.sort.uniq.join( ' ' )
+
